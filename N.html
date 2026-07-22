@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>You're welcome</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        background-color: #0b131e; /* لون يتماشى مع خلفية صورتك */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      /* 2. الحاوية التي تحمل الصورة كخلفية وبأبعاد الصورة الحقيقية تماماً */
+      .word {
+        position: relative;
+        width: 100%;
+        max-width: 420px; /* عرض الصورة (عدله حسب مقاسات صورتك الحقيقية) */
+        aspect-ratio: 9 / 16; /* نسبة الطول إلى العرض الخاصة بالصورة لضبط الأبعاد تلقائياً */
+        max-height: 100vh;
+
+        /* جعل الصورة هي خلفية هذه الحاوية بالكامل */
+        background-image: url("p-2.jpg"); /* ضع مسار صورتك هنا */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        
+      }
+
+      /* 3. تنسيق النص العلوي ليبقى ثابتاً فوق الصورة */
+      .text {
+        font-family: "Amiri", serif;
+        position: absolute;
+        top: 8%;
+        bottom: 12%;
+        right: 8%;
+        left: 8%;
+        color: #f3e5ab;
+        white-space: pre-line;
+        direction: rtl;
+        text-align: right;
+        overflow-y: auto;
+        unicode-bidi: embed;
+        text-shadow: 2px 2px 4px #0b131e;
+      }
+      .typing-p {
+        margin: 0 0 15px 0;
+        white-space: pre-wrap;
+        text-align: right;
+
+         
+      }
+    </style>
+  </head>
+  <body>
+    <audio id="bg-music" src="عود.mp3" loop autoplay></audio>
+    <div class="word">
+      <div class="text">
+        <p class="typing-p">قبل كل شيء اضغطي في اي مكان في الشاشه لتبداء الموسيقى 
+          اول شي انا ما عملت كل هذا عشان ترجعيلي 🙂
+عملته لان هذا الشي يسعدني و وفاء لتلك الايام الي كنت فيها اسعد شخص وبس وبعدين مفكرة بنساك وانسى هذا اليوم غلطانة
+
+وكيفَ أنساهُ والذكرى تُؤرّقُني
+‏وطيفُهُ في وُجوهِ الناسِ ألقَاهُ
+‏أنسى الحياة وأنسى كُل مافيهَا
+‏منَ المباهِجِ لكنْ لستُ أَنساهُ
+
+ما نسيت شي اول فيديو عملته لك ايش قلت لك لو ينساك كل الناس ما بنساك انا. على ما اتوقع قلت كذا 🌚
+والعام الماضي قلت لك انه رأس السنة حقي ١٢/٤م كنت أعني كل كلمة قلتها زمان 😌 
+ثاني شي ليش زعلتي من كلامي زمان. تولين الحب من طرف واحد لا تتوقعي بجلس كذا الين ما تختفي انتي. لا تحسبي انه بعدين بعد ما تختفي من حياتي لاي سبب من الأسباب اقول مقدر ومكتوب واكمل حياتي طبيعي. انا ما كنت اكلمك عشان اشبع غريزتي او عشان اتباهى انه معي بنت اكلمها او او... لا والله 
+وشي اخير لو انا مفكر انه انتي بنت شوارع مثل ما قلتي ما جلست معك كل هذه المده وكان كل فترة يزداد حبي لك عرفتي الان ليش انا قررت ابتعد بس ما توقعت منك ذاك الرد فكرتك أكثر شخص بيفهمني بس مش مشكلة 
+ضروري قليل نكد ههههههه المهم اتمنى لك حياة مليئة بالسعادة 
+تدري بالجامعة طلبو مننا نعمل تكليف بالبرمجة بالترم الثاني في سنة اولى نعمل برنامج مكتبة مصغرة وتحط فيه اسم الكتاب والمؤلف والسعر حطت واحد من الكتب بأسمك 🙈
+        </p>
+        <div style="text-align: center;">
+          <img id="img-1" src="p-4.jpeg" alt="Image 1" style="display: none; max-width: 150px; margin:15px auto; border-radius: 10px;">
+        </div>
+        <p class="typing-p">كنت انسى 😏 فتحتي حساب جديد وصرتي كاتبة حلكااات 😌
+بس في منشور يوم قرأته حسيت وكأنة بتقصديني معي انه مستحيل يكون كذا بس ما ادري ليش هههههه يلا مو مشكلة ولو غلطت سامحيني و HAPPY BIRTHdAY TO YOU 💞
+        </p>
+        <div style="text-align: center;">
+          <img id="img-2" src="p-3.jpeg" alt="Image 2" style="display: none; max-width: 150px; margin:15px auto; border-radius: 10px;">
+        </div>
+      </div>
+    </div>
+    <script>
+    const paragraphs = document.querySelectorAll('.typing-p');
+    
+    // تعريف الصور باستخدام الـ ID الخاص بها
+    const image1 = document.getElementById('img-1');
+    const image2 = document.getElementById('img-2');
+    
+    let pIndex = 0;
+    let charIndex = 0;
+    const speed = 40; // سرعة الكتابة
+
+    // تحضير النصوص وتفريغ الفقرات
+    const texts = Array.from(paragraphs).map(p => {
+        let text = p.innerText;
+        p.innerText = '';
+        return text;
+    });
+
+    function typeWriter() {
+        if (pIndex < paragraphs.length) {
+            if (charIndex < texts[pIndex].length) {
+                // كتابة الحرف التالي
+                paragraphs[pIndex].innerHTML += texts[pIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, speed);
+            } else {
+                // انتهت الفقرة الحالية، الآن نقوم بإظهار الصورة المقابلة لها
+                if (pIndex === 0) {
+                    // إذا انتهت الفقرة الأولى، أظهر الصورة الأولى
+                    image1.style.display = 'block';
+                } else if (pIndex === 1) {
+                    // إذا انتهت الفقرة الثانية، أظهر الصورة الثانية
+                    image2.style.display = 'block';
+                }
+
+                // الانتقال للفقرة التالية
+                pIndex++;
+                charIndex = 0;
+                setTimeout(typeWriter, speed);
+            }
+        }
+    }
+
+    // بدء التأثير بعد تحميل الصفحة
+    window.onload = function() {
+        setTimeout(typeWriter, 500);
+    };
+    document.addEventListener('click', function() {
+        const music = document.getElementById('bg-music');
+        if (music.paused) {
+            music.play();
+        }
+    }, { once: true });
+</script>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta thhp-equiv="X-UA-Compatible" content="IE=edge.chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{
+            overflow: hidden;
+            background-image: url('P-1.jpg');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            z-index: -1;
+        }
+        .nasr{
+            background-color: black;
+            text-align: center;
+            width: 100px;
+            height: 100px;
+            font-weight: bold;
+            margin-top: 40px;
+
+        }
+        .content {
+            text-align: center;
+            color: bisque;
+            margin-bottom: 60px;
+            text-shadow: 1px 1px 1px rgb(0, 0, 0), -1px -1px 1px rgba(0, 0, 0, 0.822);
+            letter-spacing: 1px;
+            font-weight: bold;
+            margin-top: 30px;
+            width: 150px;
+        }   
+        .all{
+            display: flex;
+            position: relative;
+            width: 240px;
+            max-width: 400px;
+            margin-top: 60px;
+            padding: 0;
+            
+        }
+        #toggleBte{
+            color: white;
+            position: absolute;
+            right: 65px;
+            top: 20px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
+        }
+        .NT {
+            color: wheat;
+            font-size: 0.50cm;
+            width: 180px;
+            height: 40px;
+            background-color: #59678000;
+            border: none;
+            outline: none;
+            padding: 0 30px 0 10px;
+            border-radius: 12px 0 0 0;
+            box-shadow: inset 6px 6px 12px #203c52f3,
+                        inset -6px -6px 12px #2c4e68ea;
+            transition: all 0.3 ease;
+            box-sizing: border-box;
+            
+        }
+        .NT:focus{
+            box-shadow: inset 5px 5px 10px bisque,inset -5px -5px 10px bisque ;
+        }
+        @media (max-width: 600px) {
+            .content{
+                font-size: 1rem;
+            }
+            .NT19{
+                font-size: 14px;
+            }
+        }
+        .NT19{
+            position: absolute;
+            top: 10px;
+            left: 16px;
+            color: bisque;
+            pointer-events: none;
+            transition: all 0.3 ease;
+            background-color: transparent;
+        
+        }
+        .NT:focus + .NT19,.NT:not(:placeholder-shown) + .NT19 {
+            top: -15px;
+            left: 10px;
+            padding: 0 5px;
+        }
+        .NT20{
+            color: antiquewhite;
+            background-color: #59678000;
+            border: none;
+            outline: none;
+            padding: 10px ;
+            border-radius: 0 0 12px 0;
+            box-shadow: inset 6px 6px 12px #203c52f3,
+                        inset -6px -6px 12px #2c4e68ea;
+            transition: all 0.3 ease;
+            box-sizing: border-box;
+            width: 200px;
+            height: 40px;
+        }
+        .NT20:hover{
+        box-shadow: 0 0 10px #1e3649;
+        }
+        .NT20:active{
+            transform: scale(0.8);
+        }
+     
+    </style>
+</head>
+<body>
+    <video autoplay muted loop playsinline id="myVideo" class="nasr">
+        <source src="t-1.webm" type="video/webm">
+    </video>
+    <div class="content">
+        <h3> كلمة السر الرقم الي ارجعته او يوزر التيلي حقي القديم</h3>
+    </div>
+    <div class="all"> 
+        <input class="NT" id="passInput" type="password" placeholder="" required>
+        <label class="NT19">كلمة السر</label>
+        <button onclick="checkPassword()" class="NT20">دخول</button>
+        <span id="toggleBte" onclick="togglePassword()">🙈</span>
+    </div>
+    <script>
+        function checkPassword() {
+            const userInput = document.getElementById("passInput").value;
+            if(userInput === "775633510" || userInput === "Nasr_1994") {
+                window.location.href = "text.html";
+            }
+            else {
+                alert("كلمة السر خاطئة, حاول مجددا");
+            }
+        }
+            function togglePassword() {
+        const passInput = document.getElementById("passInput");
+        const toggleBtn = document.getElementById("toggleBtn");
+
+        if (passInput.type === "password") {
+            passInput.type = "text";     // إظهار النص
+            toggleBte.textContent = "🙊"; // تغيير الأيقونة للإخفاء
+        } else {
+            passInput.type = "password"; // إخفاء النص
+            toggleBte.textContent = "🙈";  // تغيير الأيقونة للإظهار
+        }
+    }
+    </script>
+</body>
+</html>
