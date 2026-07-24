@@ -2,8 +2,8 @@
 <html>
   <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -18,7 +18,20 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        
+      }
+      .ph{
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        object-fit: cover;
         overflow: hidden;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+
+
       }
 
       /* 2. الحاوية التي تحمل الصورة كخلفية وبأبعاد الصورة الحقيقية تماماً */
@@ -29,11 +42,7 @@
         aspect-ratio: 9 / 16; /* نسبة الطول إلى العرض الخاصة بالصورة لضبط الأبعاد تلقائياً */
         max-height: 100vh;
 
-        /* جعل الصورة هي خلفية هذه الحاوية بالكامل */
-        background-image: url("p-2.jpg"); /* ضع مسار صورتك هنا */
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        
         
       }
 
@@ -41,10 +50,10 @@
       .text {
         font-family: "Amiri", serif;
         position: absolute;
-        top: 8%;
-        bottom: 12%;
-        right: 8%;
-        left: 8%;
+        top: 5%;
+        bottom: 5%;
+        right: 5%;
+        left: 5%;
         color: #f3e5ab;
         white-space: pre-line;
         direction: rtl;
@@ -63,11 +72,12 @@
     </style>
   </head>
   <body>
+    <img src="p-2.jpg" class="ph">
     <audio id="bg-music" src="عود.mp3" loop autoplay></audio>
     <div class="word">
       <div class="text">
-        <p class="typing-p">قبل كل شيء اضغطي في اي مكان في الشاشه لتبداء الموسيقى 
-          اول شي انا ما عملت كل هذا عشان ترجعيلي 🙂
+        <p class="typing-p">قبل كل شيء اضغطي في اي مكان في الشاشه لتبداء الموسيقى
+          اولا لازم تعرفي انه انا ما عملت كل هذا عشان ترجعيلي 🙂
 عملته لان هذا الشي يسعدني و وفاء لتلك الايام الي كنت فيها اسعد شخص وبس وبعدين مفكرة بنساك وانسى هذا اليوم غلطانة
 
 وكيفَ أنساهُ والذكرى تُؤرّقُني
