@@ -1,18 +1,24 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
     />
+    <meta thhp-equiv="X-UA-Compatible" content="IE=edge.chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Final Love Animation</title>
     <style>
-      body,
+      body {
+        font-family: "Amiri", serif;
+      }
+
       html {
         margin: 0;
         padding: 0;
-        background: #000;
+        background: #101010;
         overflow: hidden;
         height: 100%;
         width: 100%;
@@ -20,36 +26,48 @@
       canvas {
         display: block;
         touch-action: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #rainCanvas {
+        z-index: 1;
+      }
+      #pinkboard {
+        z-index: 2;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        pointer-events: none;
+      }
+      #mainCanvas {
+        z-index: 3;
       }
 
-      /* النص يتناسب استجابةً مع حجم القلب والشاشة تلقائياً */
       #heartText {
         position: absolute;
-        top: 50%;
+        top: 48%;
         left: 50%;
         transform: translate(-50%, -50%);
         color: #f3c0db;
         font-family: sans-serif;
-
-        /* حجم خط متجاوب يلتزم بأبعاد الشاشة والقلب */
         font-size: clamp(11px, 3.5vmin, 26px);
-        max-width: 35vmin; /* يمنع النص من الخروج عن حدود جوانب القلب */
-
+        max-width: 35vmin;
         text-align: center;
         opacity: 0;
         z-index: 10;
         pointer-events: none;
         line-height: 1.4;
-        transition: opacity 1.5s ease-in-out;
+        transition: opacity 1s ease-in-out;
         text-shadow:
           0 0 10px rgba(255, 20, 147, 0.8),
           0 0 20px rgba(255, 20, 147, 0.5);
       }
 
-      /* الزر في الأسفل بشكل منفصل تماماً */
       #navButton {
         position: absolute;
-        bottom: 8%;
+        bottom: 12%;
         left: 50%;
         transform: translateX(-50%);
         background-color: #ff149100;
@@ -65,7 +83,7 @@
         opacity: 0;
         pointer-events: none;
         transition:
-          opacity 1.5s ease-in-out,
+          opacity 1s ease-in-out,
           background-color 0.3s ease,
           transform 0.2s ease;
       }
@@ -80,47 +98,320 @@
       كل عام وأنت بخير يا<br />جميلة أبريل وجميلة كل الشهور
     </div>
     <button id="navButton">🌚</button>
+
+    <canvas id="rainCanvas"></canvas>
+    <canvas id="pinkboard"></canvas>
     <canvas id="mainCanvas"></canvas>
 
     <script>
+      // إعداد خلفية المطر (Matrix Effect)
+      const rainCanvas = document.getElementById("rainCanvas");
+      const rainCtx = rainCanvas.getContext("2d");
+
+      let rainWidth, rainHeight;
+      let drops = [];
+      const FONT_SIZE = 16;
+      let columns = 0;
+      const GLYPHS = ["I", "\u2665", "Y", "O", "U"];
+
+      let isInitialRain = true; // متغير للتحكم في رتم البداية
+
+      function setupRain() {
+        rainWidth = rainCanvas.width = window.innerWidth;
+        rainHeight = rainCanvas.height = window.innerHeight;
+        columns = Math.floor(rainWidth / FONT_SIZE);
+
+        // جعل الفارق في الارتفاع بين الأعمدة بسيطاً جداً (ليس كثيراً)
+        drops = new Array(columns).fill(0).map((_, i) => {
+          return i % 2 === 0 ? 0 : -1; // الفارق أصبح 5 أسطر فقط بدلاً من 15
+        });
+      }
+
+      function drawRain() {
+        rainCtx.fillStyle = "rgba(0, 0, 0, 0.14)";
+        rainCtx.fillRect(0, 0, rainWidth, rainHeight);
+
+        rainCtx.font = `${FONT_SIZE}px monospace`;
+        rainCtx.textBaseline = "top";
+
+        for (let i = 0; i < columns; i++) {
+          const glyph = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+          const isHeart = glyph === "\u2665";
+          const alpha = isHeart ? 0.9 : 0.4 + Math.random() * 0.3;
+
+          if (isHeart) {
+            rainCtx.fillStyle = `rgba(255, 51, 102, ${alpha})`;
+          } else {
+            rainCtx.fillStyle = `rgba(255, 150, 190, ${alpha})`;
+          }
+
+          if (isInitialRain) {
+            // رسم عمود طويل (ذيل بطول 15 رمزاً)
+            const tailLength = 15;
+            for (let j = 0; j < tailLength; j++) {
+              let fadeAlpha = alpha * (1 - j / tailLength);
+              rainCtx.globalAlpha = Math.max(fadeAlpha, 0.05);
+
+              const tailGlyph =
+                GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+              rainCtx.fillText(
+                tailGlyph,
+                i * FONT_SIZE,
+                (drops[i] - j) * FONT_SIZE,
+              );
+            }
+            rainCtx.globalAlpha = 1.0;
+
+            drops[i] += 0.37; // نفس السرعة البطيئة
+
+            // إعادة تدوير الأعمدة عند تجاوزها للشاشة مع الحفاظ على الفارق التناوبي
+            if (drops[i] * FONT_SIZE - tailLength * FONT_SIZE > rainHeight) {
+              drops[i] = i % 2 === 0 ? 0 : -15;
+            }
+          } else {
+            // الشكل العشوائي الطبيعي بعد انتهاء البداية
+            rainCtx.fillText(glyph, i * FONT_SIZE, drops[i] * FONT_SIZE);
+            if (drops[i] * FONT_SIZE > rainHeight && Math.random() > 0.975) {
+              drops[i] = 0;
+            }
+            drops[i] += 0.9;
+          }
+        }
+      }
+      // إعداد كود قلب الحب (Pinkboard)
+      var settings = {
+        particles: {
+          length: 500,
+          duration: 2,
+          velocity: 100,
+          effect: -0.75,
+          size: 20,
+        },
+      };
+
+      var Point = (function () {
+        function Point(x, y) {
+          this.x = typeof x !== "undefined" ? x : 0;
+          this.y = typeof y !== "undefined" ? y : 0;
+        }
+        Point.prototype.clone = function () {
+          return new Point(this.x, this.y);
+        };
+        Point.prototype.length = function (length) {
+          if (typeof length == "undefined")
+            return Math.sqrt(this.x * this.x + this.y * this.y);
+          this.normalize();
+          this.x *= length;
+          this.y *= length;
+          return this;
+        };
+        Point.prototype.normalize = function () {
+          var length = this.length();
+          this.x /= length;
+          this.y /= length;
+          return this;
+        };
+        return Point;
+      })();
+
+      var Particle = (function () {
+        function Particle() {
+          this.position = new Point();
+          this.velocity = new Point();
+          this.acceleration = new Point();
+          this.age = 0;
+        }
+        Particle.prototype.initialize = function (x, y, dx, dy) {
+          this.position.x = x;
+          this.position.y = y;
+          this.velocity.x = dx;
+          this.velocity.y = dy;
+          this.acceleration.x = dx * settings.particles.effect;
+          this.acceleration.y = dy * settings.particles.effect;
+          this.age = 0;
+        };
+        Particle.prototype.update = function (deltaTime) {
+          this.position.x += this.velocity.x * deltaTime;
+          this.position.y += this.velocity.y * deltaTime;
+          this.velocity.x += this.acceleration.x * deltaTime;
+          this.velocity.y += this.acceleration.y * deltaTime;
+          this.age += deltaTime;
+        };
+        Particle.prototype.draw = function (context, image) {
+          function ease(t) {
+            return --t * t * t + 1;
+          }
+          var size = image.width * ease(this.age / settings.particles.duration);
+          context.globalAlpha = 1 - this.age / settings.particles.duration;
+          context.drawImage(
+            image,
+            this.position.x - size / 2,
+            this.position.y - size / 2,
+            size,
+            size,
+          );
+        };
+        return Particle;
+      })();
+
+      var ParticlePool = (function () {
+        var particles,
+          firstActive = 0,
+          firstFree = 0,
+          duration = settings.particles.duration;
+        function ParticlePool(length) {
+          particles = new Array(length);
+          for (var i = 0; i < particles.length; i++)
+            particles[i] = new Particle();
+        }
+        ParticlePool.prototype.add = function (x, y, dx, dy) {
+          particles[firstFree].initialize(x, y, dx, dy);
+          firstFree++;
+          if (firstFree == particles.length) firstFree = 0;
+          if (firstActive == firstFree) firstActive++;
+          if (firstActive == particles.length) firstActive = 0;
+        };
+        ParticlePool.prototype.update = function (deltaTime) {
+          var i;
+          if (firstActive < firstFree) {
+            for (i = firstActive; i < firstFree; i++)
+              particles[i].update(deltaTime);
+          }
+          if (firstFree < firstActive) {
+            for (i = firstActive; i < particles.length; i++)
+              particles[i].update(deltaTime);
+            for (i = 0; i < firstFree; i++) particles[i].update(deltaTime);
+          }
+          while (
+            particles[firstActive].age >= duration &&
+            firstActive != firstFree
+          ) {
+            firstActive++;
+            if (firstActive == particles.length) firstActive = 0;
+          }
+        };
+        ParticlePool.prototype.draw = function (context, image) {
+          if (firstActive < firstFree) {
+            for (i = firstActive; i < firstFree; i++)
+              particles[i].draw(context, image);
+          }
+          if (firstFree < firstActive) {
+            for (i = firstActive; i < particles.length; i++)
+              particles[i].draw(context, image);
+            for (i = 0; i < firstFree; i++) particles[i].draw(context, image);
+          }
+        };
+        return ParticlePool;
+      })();
+
+      var pinkboardCanvas = document.getElementById("pinkboard");
+      var pinkCtx = pinkboardCanvas.getContext("2d");
+      var particlesPool = new ParticlePool(settings.particles.length);
+      var particleRate =
+        settings.particles.length / settings.particles.duration;
+      var time;
+
+      function pointOnHeart(t) {
+        let minDim = Math.min(window.innerWidth, window.innerHeight);
+        let factor = minDim / 600;
+
+        return new Point(
+          160 * factor * Math.pow(Math.sin(t), 3),
+          (130 * Math.cos(t) -
+            50 * Math.cos(2 * t) -
+            20 * Math.cos(3 * t) -
+            10 * Math.cos(4 * t) +
+            25) *
+            factor,
+        );
+      }
+
+      var heartImage = (function () {
+        var c = document.createElement("canvas"),
+          ctxImg = c.getContext("2d");
+        c.width = settings.particles.size;
+        c.height = settings.particles.size;
+        function to(t) {
+          var point = pointOnHeart(t);
+          let minDim = Math.min(window.innerWidth, window.innerHeight);
+          let factor = minDim / 600;
+          point.x =
+            settings.particles.size / 2 +
+            (point.x * settings.particles.size) / (350 * factor);
+          point.y =
+            settings.particles.size / 2 -
+            (point.y * settings.particles.size) / (350 * factor);
+          return point;
+        }
+        ctxImg.beginPath();
+        var t = -Math.PI;
+        var point = to(t);
+        ctxImg.moveTo(point.x, point.y);
+        while (t < Math.PI) {
+          t += 0.01;
+          point = to(t);
+          ctxImg.lineTo(point.x, point.y);
+        }
+        ctxImg.closePath();
+        ctxImg.fillStyle = "#ff30c5";
+        ctxImg.fill();
+        var img = new Image();
+        img.src = c.toDataURL();
+        return img;
+      })();
+
+      function renderPinkboard() {
+        var newTime = new Date().getTime() / 1000,
+          deltaTime = newTime - (time || newTime);
+        time = newTime;
+        pinkCtx.clearRect(0, 0, pinkboardCanvas.width, pinkboardCanvas.height);
+        var amount = particleRate * deltaTime;
+        for (var i = 0; i < amount; i++) {
+          var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
+          let minDim = Math.min(window.innerWidth, window.innerHeight);
+          var dir = pos
+            .clone()
+            .length(settings.particles.velocity * (minDim / 600));
+          particlesPool.add(
+            pinkboardCanvas.width / 2 + pos.x,
+            pinkboardCanvas.height / 2 - pos.y,
+            dir.x,
+            -dir.y,
+          );
+        }
+        particlesPool.update(deltaTime);
+        particlesPool.draw(pinkCtx, heartImage);
+        requestAnimationFrame(renderPinkboard);
+      }
+
+      // إعداد الكانفاس الرئيسي للنصوص والعد التنازلي
       const canvas = document.getElementById("mainCanvas");
       const ctx = canvas.getContext("2d");
       const offCanvas = document.createElement("canvas");
       const offCtx = offCanvas.getContext("2d", { willReadFrequently: true });
 
       function resize() {
-        width = canvas.width = offCanvas.width = window.innerWidth;
-        height = canvas.height = offCanvas.height = window.innerHeight;
+        let w = window.innerWidth;
+        let h = window.innerHeight;
+        width =
+          canvas.width =
+          offCanvas.width =
+          pinkboardCanvas.width =
+          rainCanvas.width =
+            w;
+        height =
+          canvas.height =
+          offCanvas.height =
+          pinkboardCanvas.height =
+          rainCanvas.height =
+            h;
+        setupRain();
       }
       let width, height;
       resize();
       window.addEventListener("resize", resize);
 
-      const rainChars = ["I", "♥", "Y", "O", "U"];
-      const fontSize = 14;
-
-      // 1. تقليل المسافة من 15 إلى 10 (رقم أصغر يعني أعمدة مطر أكثر وتقارب أكبر)
-      const spacing = 10;
-      const columns = Math.floor(window.innerWidth / spacing);
-      let drops = [];
-
-      // 2. ضربنا عدد الأعمدة في 2 لمضاعفة كمية المطر (يمكنك جعلها 3 إذا أردته كالعاصفة!)
-      for (let i = 0; i < columns * 2; i++) {
-        drops.push({
-          // (i % columns) تضمن أن المطر لا يخرج عن حدود عرض الشاشة
-          x: (i % columns) * spacing,
-
-          // توزيع المطر في أماكن عشوائية أعلى الشاشة ليتساقط بشكل متتابع وغير منقطع
-          y: Math.random() * window.innerHeight * 2 - window.innerHeight * 1.5,
-
-          // رفعنا السرعة قليلاً لتعطي إحساساً بغزارة المطر
-          speed: Math.random() * 3.0 + 1.2,
-
-          chars: [...rainChars],
-        });
-      }
-
-      let particles = [];
+      let textParticles = [];
       const sequence = [
         "3",
         "2",
@@ -134,59 +425,36 @@
         "♥",
       ];
       let step = 0;
-      let frameCount = 0;
-      let globalSpeed = 1; // للتحكم بسرعة الزمن (1 = طبيعي، أقل من 1 = بطيء)
-      let timeCounter = 0; // بديل لعداد الإطارات ليتأثر بالزمن
 
-      class Particle {
-        constructor(tx, ty, isHeart = false, side = 0) {
+      class TextParticle {
+        constructor(tx, ty) {
           this.x = Math.random() * width;
           this.y = Math.random() * height;
-          this.baseTx = tx;
-          this.baseTy = ty;
           this.tx = tx;
           this.ty = ty;
           this.ease = 0.07;
           this.radius = 1.5;
           this.alpha = 0;
           this.targetAlpha = 1;
-          this.isHeart = isHeart;
-          this.side = side;
+          this.isShaking = false;
         }
         update() {
-          if (this.isHeart) {
-            // تحسين معادلة النبض: رفعنا السرعة لـ 0.12 وحجم النبض لـ 0.05 ليكون النبض مرئياً، ناعماً، ومستمراً بسلاسة
-            let pulse = Math.sin(timeCounter * 0.12) * 0.05 + 1;
-            let cx = width / 2;
-            let cy = height / 2;
-            
-            // تحديث الهدف (النبض) بناءً على المركز
-            this.tx = cx + (this.baseTx - cx) * pulse;
-            this.ty = cy + (this.baseTy - cy) * pulse;
-          }
-
-          // تسريع تشكل القلب: رفعنا القيمة من 0.015 إلى 0.06 ليتشكل بسرعة مقبولة وجميلة
-          let currentEase = this.isHeart ? 0.04 : this.ease; 
-          
-          this.x += (this.tx - this.x) * currentEase;
-          this.y += (this.ty - this.y) * currentEase;
+          this.x += (this.tx - this.x) * this.ease;
+          this.y += (this.ty - this.y) * this.ease;
           this.alpha += (this.targetAlpha - this.alpha) * 0.1;
+
+          if (this.isShaking) {
+            let timeFactor = Date.now() * 0.002;
+            this.x += Math.sin(timeFactor + this.tx) * 0.4;
+            this.y += Math.cos(timeFactor + this.ty) * 0.4;
+          }
         }
-        draw(ctx, isFinalHeart = false) {
+        draw(ctx) {
           if (this.alpha < 0.01) return;
           ctx.globalAlpha = this.alpha;
-
-          // إذا لم يكن القلب الأخير (أي العد التنازلي أو الكلمات)، اجعله ذهبياً ومشسعاَ
-          if (!isFinalHeart) {
-            ctx.fillStyle = "white"; // لون ذهبي
-            ctx.shadowColor = "#ff1493"; // توهج ذهبي
-            ctx.shadowBlur = 10;
-          } else {
-            ctx.fillStyle = "#ffffff";
-            ctx.shadowColor = "#ff1493";
-            ctx.shadowBlur = 15;
-          }
-
+          ctx.fillStyle = "white";
+          ctx.shadowColor = "#ff1493";
+          ctx.shadowBlur = 12;
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
           ctx.fill();
@@ -197,26 +465,6 @@
       function getTargets(text) {
         offCtx.clearRect(0, 0, width, height);
         let targets = [];
-
-        if (text === "♥") {
-          let scale = Math.min(width, height) / 55;
-          let cx = width / 2;
-          let cy = height / 2;
-          for (let t = 0; t <= Math.PI * 2; t += 0.02) {
-            let x = 16 * Math.pow(Math.sin(t), 3);
-            let y = -(
-              13 * Math.cos(t) -
-              5 * Math.cos(2 * t) -
-              2 * Math.cos(3 * t) -
-              Math.cos(4 * t)
-            );
-
-            let side = x < 0 ? -1 : 1;
-            targets.push({ x: cx + x * scale, y: cy + y * scale, side: side });
-          }
-          return targets;
-        }
-
         offCtx.textAlign = "center";
         offCtx.textBaseline = "middle";
         let fSize = Math.min(width, height) * (step > 3 ? 0.18 : 0.3);
@@ -228,8 +476,7 @@
         for (let y = 0; y < height; y += 4) {
           for (let x = 0; x < width; x += 4) {
             if (imgData[(y * width + x) * 4 + 3] > 128) {
-              let side = x < width / 2 ? -1 : 1;
-              targets.push({ x, y, side });
+              targets.push({ x, y });
             }
           }
         }
@@ -237,132 +484,124 @@
       }
 
       function animate() {
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(0, 0, width, height);
+        drawRain();
+        ctx.clearRect(0, 0, width, height);
 
-        ctx.save();
-        ctx.font = `${fontSize}px monospace`;
-
-        drops.forEach((drop) => {
-          for (let i = 0; i < drop.chars.length; i++) {
-            let charY = drop.y + i * (fontSize + 4);
-
-            let alphaFactor = 0.8;
-            let topFadeZone = height * 0.2;
-            let bottomFadeZone = height * 0.8;
-
-            if (charY < topFadeZone) {
-              alphaFactor = 0.8 * (charY / topFadeZone);
-            } else if (charY > bottomFadeZone) {
-              alphaFactor =
-                0.8 * ((height - charY) / (height - bottomFadeZone));
-            }
-            alphaFactor = Math.max(0, Math.min(0.8, alphaFactor));
-
-            ctx.fillStyle = "#ff1493";
-            ctx.globalAlpha = alphaFactor;
-            ctx.fillText(drop.chars[i], drop.x, charY);
-          }
-
-          drop.y += drop.speed * globalSpeed; // نضرب السرعة بمعدل الزمن
-          if (drop.y > height) {
-            drop.y = -300;
-            // التعديل هنا أيضاً للحفاظ على نفس الكلمة مرتبة عند نزول المطر مرة أخرى
-            drop.chars = [...rainChars];
-          }
-        });
-        ctx.restore();
-
-        let isFinalStep = step >= sequence.length - 1;
-
-        // إذا وصلنا للخطوة الأخيرة (القلب)، نبطئ الزمن تدريجياً بنسبة 75%
-        if (isFinalStep) {
-          globalSpeed += (0.25 - globalSpeed) * 0.02;
-        } else {
-          globalSpeed = 1;
-        }
-
-        timeCounter += globalSpeed; // زيادة العداد بناءً على سرعة الزمن الحالية
-        particles.forEach((p) => {
+        textParticles.forEach((p) => {
           p.update();
-          p.draw(ctx, isFinalStep);
+          p.draw(ctx);
         });
         requestAnimationFrame(animate);
       }
-
       async function runSequence() {
-        while (step < sequence.length) {
-          let isHeartStep = sequence[step] === "♥";
+        // الانتظار لمدة ثانيتين للمطر المتماسك في البداية
+        await new Promise((r) => setTimeout(r, 2000));
+        isInitialRain = false; // التحويل للرتم العشوائي الطبيعي
 
-          if (step <= 3) {
-            let targets = getTargets(sequence[step]);
-            particles = targets.map(
-              (t) => new Particle(t.x, t.y, isHeartStep, t.side),
-            );
+        while (step < sequence.length) {
+          let currentText = sequence[step];
+          
+          if (currentText === "♥") {
+            textParticles.forEach((p) => {
+              p.isShaking = true;
+              p.targetAlpha = 0.2;
+            });
+
+            renderPinkboard();
+            document.getElementById("pinkboard").style.opacity = 1;
+
+            setTimeout(() => { 
+              document.getElementById("heartText").style.opacity = 1; 
+            }, 1000);
+
+            setTimeout(() => { 
+              let btn = document.getElementById("navButton");
+              btn.style.opacity = 1;
+              btn.style.pointerEvents = "auto";
+            }, 4000);
+            
+            return;
+          }
+
+          // الأرقام من 3 إلى 1 تظهر وتختفي بالطريقة الأصلية القديمة
+          if (step <= 2) {
+            let targets = getTargets(currentText);
+            textParticles = targets.map((t) => new TextParticle(t.x, t.y));
             await new Promise((r) => setTimeout(r, 1800));
-            particles.forEach((p) => (p.targetAlpha = 0));
+            
+            textParticles.forEach((p) => (p.targetAlpha = 0));
             await new Promise((r) => setTimeout(r, 800));
-            particles = [];
-          } else if (step === 4) {
-            particles = Array.from(
-              { length: 600 },
-              () => new Particle(0, 0, false, 0),
-            );
-            particles.forEach((p) => {
-              p.x = width / 2;
-              p.y = height / 2;
+            textParticles = [];
+          } 
+          // الوصول إلى رقم 0 ليقوم بالتشتت
+          else if (currentText === "0") {
+            let targets = getTargets(currentText);
+            textParticles = targets.map((t) => new TextParticle(t.x, t.y));
+            await new Promise((r) => setTimeout(r, 1800));
+
+            textParticles.forEach((p) => {
               let angle = Math.random() * Math.PI * 2;
               let dist = Math.random() * 400 + 100;
               p.tx = p.x + Math.cos(angle) * dist;
               p.ty = p.y + Math.sin(angle) * dist;
-              p.targetAlpha = 0.5;
+              p.targetAlpha = 0.2;
+              p.isShaking = true;
             });
-            await new Promise((r) => setTimeout(r, 1200));
-            step++;
-            continue;
-          } else {
-            let targets = getTargets(sequence[step]);
-            particles.forEach((p, i) => {
-              if (i < targets.length) {
-                p.baseTx = targets[i].x;
-                p.baseTy = targets[i].y;
-                p.tx = targets[i].x;
-                p.ty = targets[i].y;
-                p.isHeart = isHeartStep;
-                p.side = targets[i].side;
-                p.targetAlpha = 1;
-              } else {
-                p.targetAlpha = 0;
-              }
-            });
-            if (isHeartStep) {
-              // 1. إظهار النص مبكراً (بعد ثانية واحدة من بدء تشكل القلب)
-              setTimeout(() => { 
-                document.getElementById("heartText").style.opacity = 1; 
-              }, 1000);
-
-              // 2. تأخير ظهور الزر فقط حتى يكتمل القلب ببطء (بعد 3.5 ثوانٍ)
-              setTimeout(() => { 
-                let btn = document.getElementById("navButton");
-                btn.style.opacity = 1;
-                btn.style.pointerEvents = "auto";
-              }, 3500); 
-            }
-            if (step === sequence.length - 1) {
-              return;
-            }
             await new Promise((r) => setTimeout(r, 2000));
+            textParticles = [];
+          } 
+          // بعد الصفر: تتشكل الكلمات وتنتقل بسلاسة دون أن تختفي الكرات (تشمل YOU وباقي الكلمات)
+          else {
+            let targets = getTargets(currentText);
+
+            if (textParticles.length === 0) {
+              textParticles = targets.map((t) => new TextParticle(t.x, t.y));
+            } else {
+              textParticles.forEach((p, i) => {
+                if (i < targets.length) {
+                  p.tx = targets[i].x;
+                  p.ty = targets[i].y;
+                  p.targetAlpha = 1;
+                } else {
+                  p.targetAlpha = 0;
+                }
+              });
+
+              if (targets.length > textParticles.length) {
+                for (let i = textParticles.length; i < targets.length; i++) {
+                  let p = new TextParticle(targets[i].x, targets[i].y);
+                  p.tx = targets[i].x;
+                  p.ty = targets[i].y;
+                  textParticles.push(p);
+                }
+              }
+            }
+
+            if (currentText === "LOVE") {
+              await new Promise((r) => setTimeout(r, 2000));
+              textParticles.forEach((p) => {
+                let angle = Math.random() * Math.PI * 2;
+                let dist = Math.random() * Math.min(width, height) * 0.45 + 50;
+                p.tx = p.x + Math.cos(angle) * dist;
+                p.ty = p.y + Math.sin(angle) * dist;
+                p.targetAlpha = 0.2; 
+                p.isShaking = true;  
+              });
+              await new Promise((r) => setTimeout(r, 2000));
+            } else {
+              await new Promise((r) => setTimeout(r, 2000));
+            }
           }
           step++;
         }
       }
-
       document
         .getElementById("navButton")
         .addEventListener("click", function () {
           window.location.href = "N.html";
         });
 
+      setupRain();
       animate();
       runSequence();
     </script>

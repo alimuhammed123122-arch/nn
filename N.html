@@ -9,16 +9,14 @@
     <title>You're welcome</title>
     <style>
       body {
-        
         height: 100vh;
-        background-color: #0b131e; /* لون يتماشى مع خلفية صورتك */
+        background-color: #0b131e;
         display: flex;
         justify-content: center;
         align-items: center;
-        
-        
+        margin: 0;
       }
-      .ph{
+      .ph {
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -32,14 +30,17 @@
         z-index: -1;
       }
 
-      /* 3. تنسيق النص العلوي ليبقى ثابتاً فوق الصورة */
+      /* تنسيق النص العلوي مع إضافة مسافات (Padding) آمنة من جميع الجوانب */
       .text {
         font-family: "Amiri", serif;
         position: absolute;
-        top: 5px;
-        bottom: 5px;
-        left: 7px;
-        right: 7px;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        /* هنا يتم إضافة المسافات المطلوبة لكي لا يلتصق النص بالحواف */
+        padding: 25px 20px; 
+        box-sizing: border-box;
         color: #f3e5ab;
         white-space: pre-line;
         direction: rtl;
@@ -52,8 +53,6 @@
         margin: 0 0 10px 0;
         white-space: pre-wrap;
         text-align: right;
-
-         
       }
     </style>
   </head>
