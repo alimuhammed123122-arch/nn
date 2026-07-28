@@ -97,7 +97,7 @@
     <div id="heartText">
       كل عام وأنت بخير يا<br />جميلة أبريل وجميلة كل الشهور
     </div>
-    <button id="navButton">🌚</button>
+    <button id="navButton">>🌚<</button>
 
     <canvas id="rainCanvas"></canvas>
     <canvas id="pinkboard"></canvas>
@@ -417,7 +417,6 @@
         "2",
         "1",
         "0",
-        "يو",
         "YOU",
         "ARE",
         "MY",
@@ -495,6 +494,7 @@
       }
       async function runSequence() {
         // الانتظار لمدة ثانيتين للمطر المتماسك في البداية
+        await new Date().getTime(); // للتوافق
         await new Promise((r) => setTimeout(r, 2000));
         isInitialRain = false; // التحويل للرتم العشوائي الطبيعي
 
@@ -579,14 +579,18 @@
 
             if (currentText === "LOVE") {
               await new Promise((r) => setTimeout(r, 2000));
+              
+              // جعل تشتت كلمة LOVE كبيراً ومنتشراً في الشاشة بالكامل
               textParticles.forEach((p) => {
                 let angle = Math.random() * Math.PI * 2;
-                let dist = Math.random() * Math.min(width, height) * 0.45 + 50;
+                // زيادة مدى التشتت ليشمل أبعاد الشاشة بالكامل
+                let dist = Math.random() * Math.max(width, height) * 0.8 + 100;
                 p.tx = p.x + Math.cos(angle) * dist;
                 p.ty = p.y + Math.sin(angle) * dist;
-                p.targetAlpha = 0.2; 
+                p.targetAlpha = 0.15; 
                 p.isShaking = true;  
               });
+              
               await new Promise((r) => setTimeout(r, 2000));
             } else {
               await new Promise((r) => setTimeout(r, 2000));
